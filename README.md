@@ -67,7 +67,9 @@ This repository provides a modular and fully functional 5G testbed built for res
 
 ## ⚙️ Installation Guide
 
-### 1. Clone the repository
+### 1. Download the file "setup.sh" and run it
+
+### 2. Clone the repository
 
 ```bash
 git clone https://github.com/HenokDanielbfg/5g-testbed-conference.git
