@@ -67,124 +67,205 @@ This repository provides a modular and fully functional 5G testbed built for res
 
 ## ⚙️ Installation Guide
 
-### 1. Download the file "setup.sh" and run it
+### Option 1. Download the file "setup.sh", make it executable(chmod +x setup.sh) and run it(./setup.sh)
 
-### 2. Clone the repository
+### Option 2. Manual System setup
 
+1. **Update packages & install basic tools**
+   ```bash
+   sudo apt update
+   sudo apt install -y git wget curl gnupg software-properties-common
+   ```
+
+2. **Clone repository**
+   ```bash
+   cd ~
+   git clone https://github.com/HenokDanielbfg/5g-testbed-conference.git
+   cd 5g-testbed-conference
+   ```
+
+3. **Install Go**
+   ```bash
+   wget https://dl.google.com/go/go1.21.8.linux-amd64.tar.gz
+   sudo tar -C /usr/local -zxvf go1.21.8.linux-amd64.tar.gz
+   mkdir -p ~/go/{bin,pkg,src}
+   ```
+
+4. **Configure Go environment**
+   Add the following lines to `~/.bashrc`:
+   ```bash
+   export GOPATH=$HOME/go
+   export GOROOT=/usr/local/go
+   export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
+   export GO111MODULE=auto
+   ```
+   Then reload:
+   ```bash
+   source ~/.bashrc
+   ```
+
+5. **Install build dependencies**
+   ```bash
+   sudo apt install -y gcc g++ cmake autoconf libtool pkg-config libmnl-dev libyaml-dev libsctp-dev lksctp-tools iproute2
+   sudo snap install cmake --classic
+   ```
+
+6. **Install MongoDB**
+   ```bash
+   curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \
+     sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
+   echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/7.0 multiverse" | \
+     sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+   sudo apt update
+   sudo apt install -y mongodb-org
+   sudo systemctl start mongod
+   sudo systemctl enable mongod
+   ```
+
+7. **Install Node.js & Yarn**
+   ```bash
+   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+   sudo apt install -y nodejs
+   sudo corepack enable
+   ```
+
+8. **Build Prometheus C++ client**
+   ```bash
+   cd ~/5g-testbed-conference
+   git clone https://github.com/jupp0r/prometheus-cpp.git
+   cd prometheus-cpp
+   git submodule init && git submodule update
+   sudo apt install -y zlib1g-dev libcurl4-openssl-dev
+   mkdir _build && cd _build
+   cmake .. -DBUILD_SHARED_LIBS=ON
+   make --jobs $(nproc)
+   sudo make install
+   ```
+
+9. **Install Prometheus server**
+   ```bash
+   cd ~/5g-testbed-conference
+   wget https://github.com/prometheus/prometheus/releases/download/v2.41.0/prometheus-2.41.0.linux-amd64.tar.gz
+   tar -xvf prometheus-2.41.0.linux-amd64.tar.gz
+   ```
+   replace the "prometheus.yml" file here with the one in /5g-testbed-conference/prometheus
+
+10. **Patch Free5GC SMF event**
+    ```bash
+    nano ~/5g-testbed-conference/go/pkg/mod/github.com/free5gc/openapi@v1.0.8/models/model_smf_event.go
+    # Add the below line to the const variables:
+    SmfEvent_PDU_SES_EST SmfEvent = "PDU_SES_EST"
+    ```
+
+11. **(Optional) Reinstall CMake**
+    ```bash
+    sudo apt remove --purge -y cmake
+    sudo add-apt-repository -y ppa:kitware/ppa
+    sudo apt update
+    sudo apt install -y cmake
+    cmake --version
+    ```
+
+12. **Build UERANSIM**
+    ```bash
+    cd ~/5g-testbed-conference/UERANSIM
+    git checkout e4c492d
+    make
+    ```
+
+13. **Build Free5GC**
+    ```bash
+    cd ~/5g-testbed-conference/free5gc
+    make
+    make webconsole
+    ```
+
+14. **Install GTP5G**
+    ```bash
+    cd ~/5g-testbed-conference
+    git clone -b v0.8.7 https://github.com/free5gc/gtp5g.git
+    cd gtp5g
+    make && sudo make install
+    ```
+---
+## subscribing new UEs to the core
+To subscribe UEs to the core, run webconsole
 ```bash
-git clone https://github.com/HenokDanielbfg/5g-testbed-conference.git
-cd 5g-testbed-conference
+cd ~/free5gc/webconsole
+./bin/webconsole
+```	
+This will run the webconsole on the address http://your-local-address:5000
+Open the link and login using “admin” for username and “free5gc” for password. Then go to subscribers and add new subscribers. Just change the supi (so its unique) and change the ‘operator code type’ to OP. Subscribe 5 new UEs with SUPI values 208930000000001 – 208930000000005. For more information, check out section 4 of this link (https://free5gc.org/guide/5-install-ueransim/#4-use-webconsole-to-add-an-ue )
+After subscribing the UEs, you can terminate the webcosole using ctrl+c.
+Note: the subscribed UEs should have their own configuration files in UERANSIM's config directory
 
-2. Install & configure Free5GC
+---
+## Configuration files (.yaml/yml files)
+Core Network: You can find the config files for the Network functions in the config directory of free5gc. They can be edited to fit your needs. The config file for nwdaf is found on the NWDAF directory
 
-    Follow steps in Free5GC Install Guide
+gNB and UE: both the GNBs and UEs have configuration files. The setup is loaded with a couple of GNBs and UEs. If you want to add more, you just need to create a new config file. Note that new UEs must be subscribed to the core first (using WebConsole), if they’re not already, before they can connect. When adding new config files, make sure to not duplicate the identifier fields (for e.g the ‘nci’ for GNBs and ‘supi’ for UEs). The IP addresses should also be unique.
+To add a new GNB, you can duplicate an existing configuration file, give it a different name, and change the value of the following fields to make them unique.
+	 * nci, linkIp, ngapIp, gtpIp, the x,y coordinates
+Then add the GNB ip address to the ‘gnbSearchList’ field of all the UEs config files.
 
-    Use gtp5g version 0.86–<0.9.0
+To add a new UE, you can do the same as for GNB and change the value of the following fields to make them unique.
+* supi, imei(if supi is not used), the x,y,x1,y1 coordinates. The x,y is the home location of the UE and where it is initially deployed when joining while the x1,y1 is the work location of the UE.
 
-    Edit model_smf_event.go to add custom SMF events.
+---
+## Starting the Testbed
 
-    Run with:
+### Core
 
-cd free5gc
-./run.sh
+1. Navigate to your Free5GC directory and run:
+   ```bash
+   cd /path/to/free5gc
+   ./run.sh
+   ```
 
-3. Install & run UERANSIM
+2. Navigate to your NWDAF directory and run:
+   ```bash
+   cd /path/to/nwdaf
+   go run nwdaf.go
+   ```
 
-cd UERANSIM
-git checkout e4c492d
-make
+3. Navigate to your Prometheus directory and run:
+   ```bash
+   cd /path/to/prometheus
+   sudo prometheus --config.file=prometheus.yml --storage.tsdb.retention.time=10y
+   ```
+   Prometheus will start on <http://localhost:9090>.
 
-    Configure multiple gNBs and UEs via YAML files.
+### RAN
 
-    Subscribe UEs using Free5GC WebConsole.
+1. Navigate to your UERANSIM directory:
+   ```bash
+   cd /path/to/UERANSIM
+   ```
+2. For each gNB you want to run, execute:
+   ```bash
+   build/nr-gnb -c <path-to-gNB-config-file>
+   ```
 
-4. Install Prometheus
+### UEs
 
-wget https://github.com/prometheus/prometheus/releases/download/v2.41.0/prometheus-2.41.0.linux-amd64.tar.gz
-tar -xvf prometheus-2.41.0.linux-amd64.tar.gz
-cd prometheus-2.41.0.linux-amd64
-sudo ./prometheus --config.file=prometheus.yml --storage.tsdb.retention.time=10y
+1. In the UERANSIM directory, run:
+   ```bash
+   sudo build/nr-ue -c <path-to-UE-config-file>
+   ```
+2. Repeat for each UE.
 
-5. Start NWDAF
+### Optional: Automated UE Join/Leave
 
-cd mnc_NWDAF-main/NWDAF
-go run nwdaf.go
-
-🛠️ Event Subscription System
-
-    AMF: Events like registration, mobility, location, and access-type changes.
-
-    SMF: PDU session events and QoS updates.
-
-NWDAF uses RESTful APIs to subscribe/unsubscribe to these events and processes real-time notifications for analytics.
-📊 Prometheus Metrics
-
-Sample metrics exposed by NWDAF:
-Metric Name	Description	Labels
-amf_ue_registration_state	UE registration state (1 = active)	supi
-active_UEs	Number of active UEs	state
-UE_location_report	Logs UE handover/mobility events	supi, NrCellId, time, tac
-active_pdu_sessions	Number of active PDU sessions	state
-total_pdu_session_events	PDU session event counts	supi, PDU_ID, Est_or_Rel
-🧠 Mobility Model: ABMM
-
-An Activity-Based Mobility Model (ABMM) simulates realistic user behavior. UEs:
-
-    Choose destinations (home, work, cafes, etc.) based on time-of-day
-
-    Move with realistic speeds
-
-    Trigger handovers and location updates
-
-Mobility logic is handled in udp_task.cpp with Prometheus metrics for every transition.
-🔧 Usage
-Start the Testbed
-
-# Core
-cd free5gc && ./run.sh
-
-# NWDAF
-cd mnc_NWDAF-main/NWDAF && go run nwdaf.go
-
-# Prometheus
-cd prometheus && sudo ./prometheus --config.file=prometheus.yml --storage.tsdb.retention.time=10y
-
-# RAN (GNB)
-build/nr-gnb -c config/gnb.yaml
-
-# UE
-sudo build/nr-ue -c config/ue.yaml
-
-# Or dynamic attach/detach
+If you want UEs to join/leave the network dynamically, you can use the `join_leavev2.py` script:
+```bash
+cd /path/to/UERANSIM
 python3 join_leavev2.py
+```
+By default, the script will manage 3 UEs; adjust the script to change this number.
 
-📈 Visualization Tools
+For more details on UERANSIM usage, refer to the [UERANSIM Wiki](https://github.com/aligungr/UERANSIM/wiki/Usage).
 
-    handover_live_visual.py – Live display of UE handovers.
-
-    mobility_live_visual.py – Tracks UE location over time.
-
-📂 Configuration Notes
-
-    Free5GC config: free5gc/config/
-
-    NWDAF config: mnc_NWDAF-main/NWDAF/config.yaml
-
-    UE & gNB: UERANSIM/config/
-
-Make sure identifiers like SUPI (UE) and NCI (gNB) are unique.
-🧪 Sample Prometheus Query (Python)
-
-from prometheus_api_client import PrometheusConnect
-
-prom = PrometheusConnect(url="http://localhost:9090", disable_ssl=True)
-response = prom.custom_query_range(
-    query="amf_ue_registration_state",
-    start_time=start_time,
-    end_time=end_time,
-    step="10m"
-)
-
+---
 👥 Acknowledgments
 
     Free5GC
