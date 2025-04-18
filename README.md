@@ -1,6 +1,6 @@
 # 5G Testbed Conference
 
-This repository provides a modular and fully functional 5G testbed built for research and experimentation. It integrates open-source tools like Free5GC, UERANSIM, NWDAF, and Prometheus to simulate a real-world 5G environment capable of handling mobility, session management, and advanced network analytics.
+This repository provides a modular and fully functional 5G testbed built for research and experimentation. It integrates open-source tools like Free5GC, UERANSIM, and Prometheus to simulate a real-world 5G environment capable of handling mobility, session management, and advanced network analytics.
 
 ---
 
@@ -8,7 +8,7 @@ This repository provides a modular and fully functional 5G testbed built for res
 
 - Simulate realistic 5G core and RAN behaviors.
 - Test UE mobility, handovers, and session management.
-- Collect and analyze network data using NWDAF and Prometheus.
+- Collect and analyze network data.
 - Provide a research-ready, extendable platform.
 
 ---
@@ -27,32 +27,41 @@ This repository provides a modular and fully functional 5G testbed built for res
 - **OS**: Ubuntu 20.04 (Kernel: 5.0.0–5.4.x recommended)
 - **Languages**: Go (v1.21.8), Python, C++
 - **Dependencies**:
-  - Docker & Docker Compose
   - Prometheus 2.41+
-  - SCTP libraries
   - gtp5g v0.86–<0.9.0
 
 ---
 
 ## 🏗️ Architecture Overview
-
-   +-------------+       +-------------+        +-------------+
-   |   UERANSIM  | <---> |   Free5GC   | <----> |  Prometheus |
-   | (gNB & UE)  |       |   Core NF   |        +-------------+
+```
+   +-------------+       +-------------+ 
+   |   UERANSIM  | <---> |   Free5GC   | 
+   | (gNB & UE)  |       |   Core NF   | 
    +-------------+       |     NWDAF   |
                          +-------------+
 
-
-- UEs register and move across cells.
+```
+- UEs register and move in a defined region.
 - AMF/SMF expose events to NWDAF.
 - NWDAF publishes metrics to Prometheus.
 
 ---
 
 ## 📦 Repository Structure
-
-5g-testbed-conference/ ├── free5gc/ # Core Network ├── UERANSIM/ # RAN & UE Simulation ├── mnc_NWDAF-main/ # NWDAF with Prometheus integration ├── prometheus/ # Prometheus configs ├── core dataset/ # Collected metrics ├── handover_live_visual.py # Handover visualization tool ├── mobility_live_visual.py # Mobility visualization tool ├── join_leavev2.py # Dynamic UE attach/detach simulation ├── setup.sh # Environment setup script ├── cleanup.sh # Cleanup/reset script └── README.md
-
+```
+5g-testbed-conference/ 
+├── free5gc/ # Core Network 
+├── UERANSIM/ # RAN & UE Simulation 
+├── mnc_NWDAF-main/ # NWDAF with Prometheus integration 
+├── prometheus/ # Prometheus configs 
+├── core dataset/ # Collected metrics 
+├── handover_live_visual.py # Handover visualization tool 
+├── mobility_live_visual.py # Mobility visualization tool 
+├── join_leavev2.py # Dynamic UE attach/detach simulation 
+├── setup.sh # Environment setup script 
+├── cleanup.sh # Cleanup/reset script 
+└── README.md
+```
 
 ---
 
