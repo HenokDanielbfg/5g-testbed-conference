@@ -4,7 +4,7 @@ This repository provides a modular and fully functional 5G testbed built for res
 
 ---
 
-## 🚀 Project Objectives
+## Project Objectives
 
 - Simulate realistic 5G core and RAN behaviors.
 - Test UE mobility, handovers, and session management.
@@ -13,7 +13,7 @@ This repository provides a modular and fully functional 5G testbed built for res
 
 ---
 
-## 🧩 Key Components
+## Key Components
 
 - **Free5GC**: Implements the 5G Core (AMF, SMF, UPF, PCF, UDM, etc.).
 - **UERANSIM**: Simulates the gNB and UE behaviors including handover and movement.
@@ -22,7 +22,7 @@ This repository provides a modular and fully functional 5G testbed built for res
 
 ---
 
-## 🖥️ System Requirements
+## System Requirements
 
 - **OS**: Ubuntu 20.04 (Kernel: 5.0.0–5.4.x recommended)
 - **Languages**: Go (v1.21.8), Python, C++
@@ -32,7 +32,7 @@ This repository provides a modular and fully functional 5G testbed built for res
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 ```
    +-------------+       +-------------+ 
    |   UERANSIM  | <---> |   Free5GC   | 
@@ -47,7 +47,7 @@ This repository provides a modular and fully functional 5G testbed built for res
 
 ---
 
-## 📦 Repository Structure
+## Repository Structure
 ```
 5g-testbed-conference/ 
 ├── free5gc/ # Core Network 
@@ -65,7 +65,7 @@ This repository provides a modular and fully functional 5G testbed built for res
 
 ---
 
-## ⚙️ Installation Guide
+## Installation Guide
 
 ### Option 1. Download the file "setup.sh", make it executable(chmod +x setup.sh) and run it(./setup.sh)
 
