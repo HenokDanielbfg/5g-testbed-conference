@@ -9,8 +9,8 @@ sudo apt install wget
 # Clone testbed repository
 cd ~
 echo "📥 Cloning testbed repository..."
-git clone https://github.com/HenokDanielbfg/testbed.git
-cd testbed
+git clone https://github.com/HenokDanielbfg/5g-testbed-conference.git
+cd 5g-testbed-conference
 
 # Install Go
 echo "📦 Installing Go..."
@@ -54,7 +54,7 @@ sudo corepack enable  # Enable Yarn
 
 # Install Prometheus C++ library
 echo "📦 Installing Prometheus C++ library..."
-cd ~/testbed
+cd ~/5g-testbed-conference
 git clone https://github.com/jupp0r/prometheus-cpp.git
 cd prometheus-cpp
 git submodule init
@@ -69,7 +69,7 @@ sudo cmake --install .
 
 # Install Prometheus
 echo "📦 Installing Prometheus..."
-cd ~/testbed
+cd ~/5g-testbed-conference
 sudo wget https://github.com/prometheus/prometheus/releases/download/v2.41.0/prometheus-2.41.0.linux-amd64.tar.gz
 sudo tar -xvf prometheus-2.41.0.linux-amd64.tar.gz
 
@@ -86,13 +86,13 @@ read -p ""
 sudo apt remove --purge cmake -y && sudo apt update && sudo apt install -y software-properties-common && sudo add-apt-repository -y ppa:kitware/ppa && sudo apt update && sudo apt install -y cmake && cmake --version
 # Install UERANSIM
 echo "🛠️ Installing UERANSIM..."
-cd ~/testbed/UERANSIM
+cd ~/5g-testbed-conference/UERANSIM
 # git checkout e4c492d
 sudo make  # Make sure Prometheus C++ is installed first
 
 # Install Free5GC
 echo "🛠️ Installing Free5GC..."
-cd ~/testbed
+cd ~/5g-testbed-conference
 cd free5gc
 # rmdir gtp5g
 sudo make
