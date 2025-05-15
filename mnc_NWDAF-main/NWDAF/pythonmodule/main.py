@@ -37,7 +37,7 @@ from pythonmodule import MTLF, AnLF
 def analytics():
     data = {}
     json_param = json.loads(sys.argv[1])
-    print(f"Received Analytics Request for")
+    print(f"Received Handover Analytics Request for")
     print(f"target_ue: {json_param.get('TargetUe')}")
     print(f"target_time: {json_param.get('TargetTime')}")
     # if str(json_param.get('nfService')) == 'training':
@@ -50,7 +50,7 @@ def analytics():
     #     print("analytics")
     # else:
     #     data['data'] = "None (Wrong)"
-    result = AnLF.predict_ue_location(json_param.get('TargetUe') ,json_param.get('TargetTime'))
+    result = AnLF.predict_ue_location(json_param.get('TargetUe'))# ,json_param.get('TargetTime'))
     # data["result"] = str(result)
     # print("analytics")
     return json.dumps(result)
