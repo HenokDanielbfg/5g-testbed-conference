@@ -104,6 +104,54 @@ configuration:
       supportedNssaiAvailabilityData:
         - tai: # Tracking Area Identifier
             plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+              mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+              mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+            tac: 000001 # Tracking Area Code
+          supportedSnssaiList: # Supported S-NSSAIs of the tracking area
+            - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            - sst: 2 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 000001 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - tai: # Tracking Area Identifier
+            plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+              mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+              mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+            tac: 000002 # Tracking Area Code
+          supportedSnssaiList: # Supported S-NSSAIs of the tracking area
+            - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            - sst: 2 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 000001 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - tai: # Tracking Area Identifier
+            plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+              mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+              mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+            tac: 000003 # Tracking Area Code
+          supportedSnssaiList: # Supported S-NSSAIs of the tracking area
+            - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            - sst: 2 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 000001 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - tai: # Tracking Area Identifier
+            plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+              mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+              mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+            tac: 000004 # Tracking Area Code
+          supportedSnssaiList: # Supported S-NSSAIs of the tracking area
+            - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+            - sst: 2 # Slice/Service Type (uinteger, range: 0~255)
+              sd: 000001 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - tai: # Tracking Area Identifier (legacy)
+            plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
               mcc: 466 # Mobile Country Code (3 digits string, digit: 0~9)
               mnc: 92 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
             tac: 33456 # Tracking Area Code (uinteger, range: 0~16777215)
@@ -233,6 +281,58 @@ configuration:
               sd: 000001 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
   taList: # List of supported tracking area and their related information of this NSSF instance
     - tai: # Tracking Area Identity
+        plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+          mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+          mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+        tac: 000001 # Tracking Area Code
+      accessType: 3GPP_ACCESS # Access type of the tracking area
+      supportedSnssaiList: # List of supported S-NSSAIs of the tracking area
+        - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - sst: 2 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 000001 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+    - tai: # Tracking Area Identity
+        plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+          mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+          mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+        tac: 000002 # Tracking Area Code
+      accessType: 3GPP_ACCESS # Access type of the tracking area
+      supportedSnssaiList: # List of supported S-NSSAIs of the tracking area
+        - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - sst: 2 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 000001 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+    - tai: # Tracking Area Identity
+        plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+          mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+          mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+        tac: 000003 # Tracking Area Code
+      accessType: 3GPP_ACCESS # Access type of the tracking area
+      supportedSnssaiList: # List of supported S-NSSAIs of the tracking area
+        - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - sst: 2 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 000001 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+    - tai: # Tracking Area Identity
+        plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
+          mcc: 208 # Mobile Country Code (3 digits string, digit: 0~9)
+          mnc: 93 # Mobile Network Code (2 or 3 digits string, digit: 0~9)
+        tac: 000004 # Tracking Area Code
+      accessType: 3GPP_ACCESS # Access type of the tracking area
+      supportedSnssaiList: # List of supported S-NSSAIs of the tracking area
+        - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 010203 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - sst: 1 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 112233 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+        - sst: 2 # Slice/Service Type (uinteger, range: 0~255)
+          sd: 000001 # Slice Differentiator (3 bytes hex string, range: 000000~FFFFFF)
+    - tai: # Tracking Area Identity (legacy)
         plmnId: # Public Land Mobile Network ID, <PLMN ID> = <MCC><MNC>
           mcc: 466 # Mobile Country Code (3 digits string, digit: 0~9)
           mnc: 92 # Mobile Network Code (2 or 3 digits string, digit: 0~9)

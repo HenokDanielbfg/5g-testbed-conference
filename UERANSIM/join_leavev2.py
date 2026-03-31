@@ -38,10 +38,10 @@ class UEManager:
         """
         while self.running:
             try:
-                # # Random delay before registration
-                # reg_delay = random.uniform(1500, 2000)
-                # print(f"UE {imsi} will register in {reg_delay/60:.2f} minutes")
-                # time.sleep(reg_delay)
+                # Random delay before registration
+                reg_delay = random.uniform(30, 35)
+                print(f"UE {imsi} will register in {reg_delay/60:.2f} minutes")
+                time.sleep(reg_delay)
 
                 if not self.running:
                     break
@@ -75,7 +75,7 @@ class UEManager:
                 print(f"UE configuration for IMSI {imsi} running with PID: {ue_process.pid}")
 
                 # Random connection duration
-                connection_time = random.uniform(1500, 9999)
+                connection_time = random.uniform(30, 35)
                 print(f"UE {imsi} will deregister in {connection_time/60:.2f} minutes")
                 time.sleep(connection_time)
 
@@ -117,9 +117,9 @@ class UEManager:
 
                         
                 # Random delay before registration
-                reg_delay = random.uniform(500, 4000)
-                print(f"UE {imsi} will register in {reg_delay/60:.2f} minutes")
-                time.sleep(reg_delay)
+                # reg_delay = random.uniform(500, 4000)
+                # print(f"UE {imsi} will register in {reg_delay/60:.2f} minutes")
+                # time.sleep(reg_delay)
                 # Small delay before next cycle
                 # if self.running:
                 #     time.sleep(10)

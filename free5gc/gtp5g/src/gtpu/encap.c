@@ -328,7 +328,7 @@ static int gtp1u_udp_encap_recv(struct gtp5g_dev *gtp, struct sk_buff *skb)
 
     pdr = pdr_find_by_gtp1u(gtp, skb, hdrlen, teid, gtp_type);
     if (!pdr) {
-        GTP5G_ERR(gtp->dev, "No PDR match this skb : teid[%d]\n", ntohl(teid));
+        GTP5G_ERR(gtp->dev, "No PDR match this skb : teid[%x]\n", ntohl(teid));
         return PKT_DROPPED;
     }
 
@@ -698,7 +698,7 @@ static int gtp5g_rx(struct pdr *pdr, struct sk_buff *skb,
 {
     int rt = -1;
     struct far *far = rcu_dereference(pdr->far);
-    // struct qer *qer = rcu_dereference(pdr->qer);
+    struct qer __rcu *qer_with_rate = rcu_dereference(pdr->qer_with_rate);
 
     if (!far) {
         GTP5G_ERR(pdr->dev, "FAR not exists for PDR(%u)\n", pdr->id);
@@ -716,6 +716,12 @@ static int gtp5g_rx(struct pdr *pdr, struct sk_buff *skb,
             rt = gtp5g_drop_skb_encap(skb, pdr->dev, pdr);
             break;
         case FAR_ACTION_FORW:
+            if (qer_with_rate != NULL) {
+                if (qer_with_rate->ul_dl_gate & QER_UL_GATE_CLOSE) {
+                    GTP5G_TRC(pdr->dev, "QER UL gate is closed, drop the packet");
+                    return PKT_DROPPED;
+                }
+            }
             rt = gtp5g_fwd_skb_encap(skb, pdr->dev, hdrlen, pdr, far);
             break;
         case FAR_ACTION_BUFF:
@@ -924,10 +930,12 @@ static int gtp5g_fwd_skb_ipv4(struct sk_buff *skb,
             iph, 
             hdr_creation,
             pdr->qfi, 
+            far->seq_number,
             rt, 
             &fl4, 
             dev);
 
+    far->seq_number++;
     pdr->dl_pkt_cnt++;
     pdr->dl_byte_cnt += skb->len;
     GTP5G_INF(NULL, "PDR (%u) DL_PKT_CNT (%llu) DL_BYTE_CNT (%llu)", pdr->id, pdr->dl_pkt_cnt, pdr->dl_byte_cnt);
@@ -989,6 +997,7 @@ int gtp5g_handle_skb_ipv4(struct sk_buff *skb, struct net_device *dev,
     struct far *far;
     //struct gtp5g_qer *qer;
     struct iphdr *iph;
+    struct qer __rcu *qer_with_rate = NULL;
 
     /* Read the IP destination address and resolve the PDR.
      * Prepend PDR header with TEI/TID from PDR.
@@ -1012,6 +1021,7 @@ int gtp5g_handle_skb_ipv4(struct sk_buff *skb, struct net_device *dev,
     //            __func__, __LINE__, qer->id, qer->qfi);
     //}
 
+    qer_with_rate = rcu_dereference(pdr->qer_with_rate);
     far = rcu_dereference(pdr->far);
     if (far) {
         // One and only one of the DROP, FORW and BUFF flags shall be set to 1.
@@ -1021,6 +1031,12 @@ int gtp5g_handle_skb_ipv4(struct sk_buff *skb, struct net_device *dev,
         case FAR_ACTION_DROP:
             return gtp5g_drop_skb_ipv4(skb, dev, pdr);
         case FAR_ACTION_FORW:
+            if (qer_with_rate != NULL) {
+                if (qer_with_rate->ul_dl_gate & QER_DL_GATE_CLOSE) {
+                    GTP5G_TRC(pdr->dev, "QER DL gate is closed, drop the packet");
+                    return PKT_DROPPED;
+                }
+            }
             return gtp5g_fwd_skb_ipv4(skb, dev, pktinfo, pdr, far);
         case FAR_ACTION_BUFF:
             return gtp5g_buf_skb_ipv4(skb, dev, pdr, far);

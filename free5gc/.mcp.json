@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "nwdaf": {
+      "command": "python3",
+      "args": ["/home/henokbfg/Documents/5g-testbed-conference/free5gc/mcp-servers/nwdaf-mcp.py"]
+    },
+    "sbi-gateway": {
+      "command": "python3",
+      "args": ["/home/henokbfg/Documents/5g-testbed-conference/free5gc/mcp-servers/sbi-mcp.py"]
+    },
+    "log": {
+      "command": "python3",
+      "args": ["/home/henokbfg/Documents/5g-testbed-conference/free5gc/mcp-servers/log-mcp.py"]
+    }
+  }
+}

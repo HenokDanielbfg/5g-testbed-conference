@@ -1,0 +1,104 @@
+---
+title: LLM-Driven Autonomous 5G Network Management via NWDAF
+---
+graph TB
+    classDef core fill:#2563eb,stroke:#1e40af,color:#fff,stroke-width:2px
+    classDef nwdaf fill:#059669,stroke:#047857,color:#fff,stroke-width:2px
+    classDef mcp fill:#d97706,stroke:#b45309,color:#fff,stroke-width:2px
+    classDef agent fill:#7c3aed,stroke:#5b21b6,color:#fff,stroke-width:2px
+    classDef threat fill:#dc2626,stroke:#991b1b,color:#fff,stroke-width:2px
+    classDef ext fill:#6b7280,stroke:#4b5563,color:#fff,stroke-width:2px
+
+    %% User
+    USER["Operator (Claude Code CLI)"]:::ext
+
+    %% Agent Layer
+    subgraph AGENTS ["LLM Agent Team (5gc-ops)"]
+        direction TB
+        LEAD["Team Lead<br/><i>coordination + reporting</i>"]
+        subgraph OPS ["Operational Agents"]
+            MON["Monitor<br/><i>observability</i>"]
+            ANA["Analyst<br/><i>health assessment</i>"]
+            FAULT["Fault Detector<br/><i>reliability</i>"]
+        end
+        subgraph SEC ["Security Agent"]
+            THREAT["Threat Detector<br/><i>adversarial analysis</i>"]
+        end
+        LEAD --- MON
+        LEAD --- ANA
+        LEAD --- FAULT
+        LEAD --- THREAT
+        MON -. "cross-agent<br/>intel sharing" .- ANA
+        MON -. "intel" .- FAULT
+        MON -. "intel" .- THREAT
+        ANA -. "intel" .- FAULT
+        ANA -. "intel" .- THREAT
+        FAULT -. "intel" .- THREAT
+    end
+
+    %% MCP Layer
+    subgraph MCP ["MCP Servers (Python / FastMCP)"]
+        SBI_MCP["SBI Gateway<br/><i>OAuth2-aware NRF/AMF/SMF proxy</i>"]
+        NWDAF_MCP["NWDAF Analytics<br/><i>5 analytic event types</i>"]
+        LOG_MCP["Log Server<br/><i>structured log access</i>"]
+    end
+
+    %% Shared Task Board
+    TASKS["Shared Task Board<br/><i>task dependencies + ownership</i>"]:::ext
+    LEAD -.- TASKS
+    MON -.- TASKS
+    ANA -.- TASKS
+    FAULT -.- TASKS
+    THREAT -.- TASKS
+
+    %% 5G Core
+    subgraph CORE ["5G Core Network (free5gc)"]
+        subgraph CP ["Control Plane (SBI / HTTP2)"]
+            NRF["NRF<br/><i>discovery + OAuth2</i>"]
+            AMF["AMF<br/><i>access + mobility</i>"]
+            SMF["SMF<br/><i>session mgmt</i>"]
+            OTHER["AUSF, UDM, UDR,<br/>PCF, NSSF, CHF"]
+        end
+        UPF["UPF<br/><i>user plane (GTP5G)</i>"]
+        NWDAF_NF["NWDAF (Custom NF)<br/><i>event collection + analytics<br/>+ anomaly detection + prediction</i>"]
+        LOGS["Log Files<br/><i>shared log directory</i>"]
+    end
+
+    %% RAN
+    subgraph RAN ["RAN (UERANSIM)"]
+        GNB["gNB(s)"]
+        UES["UEs (1–50+)"]
+    end
+
+    %% Agent → MCP connections
+    MON & ANA & FAULT & THREAT -- "MCP tool calls" --> SBI_MCP & NWDAF_MCP & LOG_MCP
+    MON & FAULT -. "bash<br/>(pgrep, process audit)" .-> CORE
+
+    %% MCP → Core connections
+    SBI_MCP -- "SBI APIs<br/>(NRF, AMF OAM, SMF OAM)" --> CP
+    NWDAF_MCP -- "Nnwdaf_AnalyticsInfo" --> NWDAF_NF
+    LOG_MCP -- "file I/O" --> LOGS
+
+    %% Core internal
+    AMF -. "Namf_EventExposure<br/>(registration, location,<br/>connectivity)" .-> NWDAF_NF
+    SMF -. "Nsmf_EventExposure<br/>(session est/rel,<br/>path changes)" .-> NWDAF_NF
+    AMF --- SMF --- OTHER
+    AMF & SMF & OTHER -- "OAuth2 tokens" --> NRF
+    SMF -- "PFCP" --> UPF
+    CP --> LOGS
+
+    %% RAN connections
+    UES --> GNB
+    GNB -- "N2 (NGAP)" --> AMF
+    GNB -- "N3 (GTP-U)" --> UPF
+
+    %% User connection
+    USER <--> LEAD
+
+    %% Styles
+    class NRF,AMF,SMF,OTHER,UPF core
+    class NWDAF_NF nwdaf
+    class SBI_MCP,NWDAF_MCP,LOG_MCP mcp
+    class LEAD,MON,ANA,FAULT agent
+    class THREAT threat
+    class USER,GNB,UES,TASKS ext
